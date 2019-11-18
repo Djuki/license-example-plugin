@@ -1,0 +1,22 @@
+{
+    "name": "license-example",
+    "description": "Example how to store license key and check for update on LicenseBridge",
+    "license": "MIT",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Ivan Djurdjevac",
+            "email": "djurdjevac@gmail.com",
+            "homepage": "https://licensebridge.com",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "LicenseExample\\": "src/"
+        }
+    },
+    "require": {
+        "league/oauth2-client": "^2.4"
+    }
+}
