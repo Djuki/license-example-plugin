@@ -12,7 +12,7 @@
  * Plugin Name:       License Bridge connection example
  * Plugin URI:        https://example.com/plugin-name
  * Description:       Just an example how to connect to License Bridge
- * Version:           1.4.0
+ * Version:           1.5.2
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Your Name
