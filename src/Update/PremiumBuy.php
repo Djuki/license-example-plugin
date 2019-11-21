@@ -2,6 +2,8 @@
 
 namespace LicenseExample\Update;
 
+use Plugin_Upgrader;
+
 class PremiumBuy
 {
 
@@ -36,7 +38,7 @@ class PremiumBuy
         update_option('my_client_id', $_REQUEST['client_id']);
         update_option('my_client_secret', $_REQUEST['client_secret']);
 
-        $this->upgrade_plugin(plugin_basename(__FILE__));
+        $this->upgrade_plugin(LICENSE_CHECK_PLUGIN_NAME);
     
         wp_die(); // this is required to terminate immediately and return a proper response
     }
