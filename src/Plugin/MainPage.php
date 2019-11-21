@@ -6,7 +6,7 @@ class MainPage
 {
     public function __construct()
     {
-        $this->init_hooks();
+        //$this->init_hooks();
     }
 
     public function init_hooks()
