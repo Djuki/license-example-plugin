@@ -30,6 +30,7 @@
 
 use LicenseExample\Plugin\MainPage;
 use LicenseExample\Update\PluginAutoUpdate;
+use LicenseExample\Update\PremiumBuy;
 
 $slug = plugin_basename(__FILE__);
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
