@@ -40,7 +40,7 @@ class PremiumUpdate
             $res = new \stdClass();
             $res->name = $remote->name;
             $res->slug = LICENSE_CHECK_PLUGIN_NAME;
-            $res->version = $remote->version;
+            $res->version = '1.5.0';
             $res->tested = $remote->tested;
             $res->requires = $remote->requires;
             $res->author = '<a href="https://rudrastyh.com">Misha Rudrastyh</a>'; // I decided to write it directly in the plugin

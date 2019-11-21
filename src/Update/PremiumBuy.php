@@ -38,7 +38,7 @@ class PremiumBuy
         update_option('my_client_id', $_REQUEST['client_id']);
         update_option('my_client_secret', $_REQUEST['client_secret']);
 
-        $this->upgrade_plugin(plugin_basename(__FILE__));
+        $this->upgrade_plugin(LICENSE_CHECK_PLUGIN_NAME);
     
         wp_die(); // this is required to terminate immediately and return a proper response
     }
@@ -46,7 +46,6 @@ class PremiumBuy
 
     private function upgrade_plugin($plugin_slug)
     {
-        exit;
         include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         wp_cache_flush();
 
