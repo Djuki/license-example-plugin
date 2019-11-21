@@ -44,7 +44,7 @@ $page = new MainPage;
 $buy = new PremiumBuy;
 
 // Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
-//$autoupdate = new PluginAutoUpdate;
+$autoupdate = new PluginAutoUpdate;
 
 // If Logged user create nonce for guest user, that nonce doesn't work
 // This function create a nonce without token and id, like from wp_create_nonce but for guest user
