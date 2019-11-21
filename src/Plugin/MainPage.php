@@ -24,7 +24,7 @@ class MainPage
     {
         $nonce = wp_create_nonce("license_key_nonce");
         $callback = admin_url('admin-ajax.php?action=save_license_key&_nonce=' . $nonce);
-        $sellPage = PLUGIN_LANDING_PAGE.'?callback_url='.$callback;
+        $sellPage = PLUGIN_LANDING_PAGE.'?callback_url='.urlencode($callback);
 
         echo '<div class="wrap"><div id="icon-options-general" class="icon32"><br></div>
             <h2>License Bridge Example</h2>

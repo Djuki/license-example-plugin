@@ -2,6 +2,8 @@
 
 namespace LicenseExample\Update;
 
+use Plugin_Upgrader;
+
 class PremiumBuy
 {
 
@@ -44,6 +46,7 @@ class PremiumBuy
 
     private function upgrade_plugin($plugin_slug)
     {
+        exit;
         include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         wp_cache_flush();
 
