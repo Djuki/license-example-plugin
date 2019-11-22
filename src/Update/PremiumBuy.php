@@ -50,6 +50,7 @@ class PremiumBuy
         wp_cache_flush();
 
         $upgrader = new Plugin_Upgrader();
+        $update = new PremiumUpdate();
         $upgraded = $upgrader->upgrade($plugin_slug);
 
         return $upgraded;
