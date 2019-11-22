@@ -87,7 +87,7 @@ class PremiumUpdate
             if ($remote && version_compare('1.0', $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<')) {
                 $res = new \stdClass();
                 $res->slug = LICENSE_CHECK_PLUGIN_NAME;
-                $res->plugin = 'license-example/plugin.php'; // it could be just YOUR_PLUGIN_SLUG.php if your plugin doesn't have its own directory
+                $res->plugin = LICENSE_CHECK_PLUGIN_NAME;
                 $res->new_version = $remote->version;
                 $res->tested = $remote->tested;
                 $res->package = $remote->download_url;
