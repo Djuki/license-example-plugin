@@ -40,7 +40,7 @@ class PremiumUpdate
             $res = new \stdClass();
             $res->name = $remote->name;
             $res->slug = LICENSE_CHECK_PLUGIN_NAME;
-            $res->version = '1.5.0';
+            $res->version = remote->version;
             $res->tested = $remote->tested;
             $res->requires = $remote->requires;
             $res->author = '<a href="https://rudrastyh.com">Misha Rudrastyh</a>'; // I decided to write it directly in the plugin
@@ -82,6 +82,12 @@ class PremiumUpdate
         $urlProtected = admin_url('admin-ajax.php?action=save_license_key&_nonce='.$nonce);
         
         if ($remote = $this->licenseServer->fetchPluginDetails()) {
+
+
+            //$file = download_url($remote->download_url);
+            //$filePath = '/tmp/test.zip';
+            //$content = base64_decode($remote->download_content);
+            //file_put_contents($filePath, $content);
 
             // your installed plugin version should be on the line below! You can obtain it dynamically of course 
             if ($remote && version_compare('1.0', $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<')) {
