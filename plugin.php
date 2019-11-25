@@ -35,7 +35,7 @@ use LicenseExample\Update\PremiumUpdate;
 
 $slug = plugin_basename(__FILE__);
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
-define("LB_URL", "https://9d0d45a3.ngrok.io");
+define("LB_URL", "https://5886ce64.ngrok.io");
 define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
 
 include "vendor/autoload.php";
