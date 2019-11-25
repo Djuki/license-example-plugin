@@ -2,6 +2,8 @@
 
 namespace LicenseExample\Update;
 
+use ZipArchive;
+
 class PremiumUpdate
 {
     private $licenseServer;
@@ -40,7 +42,7 @@ class PremiumUpdate
             $res = new \stdClass();
             $res->name = $remote->name;
             $res->slug = LICENSE_CHECK_PLUGIN_NAME;
-            $res->version = remote->version;
+            $res->version = $remote->version;
             $res->tested = $remote->tested;
             $res->requires = $remote->requires;
             $res->author = '<a href="https://rudrastyh.com">Misha Rudrastyh</a>'; // I decided to write it directly in the plugin
@@ -85,9 +87,11 @@ class PremiumUpdate
 
 
             //$file = download_url($remote->download_url);
-            //$filePath = '/tmp/test.zip';
-            //$content = base64_decode($remote->download_content);
-            //file_put_contents($filePath, $content);
+            $filePath = '/tmp/test.zip';
+            $content = base64_decode($remote->download_content);
+            file_put_contents($filePath, $content);
+
+            $this->renameFolderInZip($filePath, dirname(LICENSE_CHECK_PLUGIN_NAME));
 
             // your installed plugin version should be on the line below! You can obtain it dynamically of course 
             if ($remote && version_compare('1.0', $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<')) {
@@ -96,7 +100,7 @@ class PremiumUpdate
                 $res->plugin = LICENSE_CHECK_PLUGIN_NAME;
                 $res->new_version = $remote->version;
                 $res->tested = $remote->tested;
-                $res->package = $remote->download_url;
+                $res->package = $filePath;
                 $transient->response[$res->plugin] = $res;
                 //$transient->checked[$res->plugin] = $remote->version;
                 
@@ -105,4 +109,29 @@ class PremiumUpdate
         return $transient;
     }
 
+    public function renameFolderInZip($file, $newName)
+    {
+        if (class_exists('ZipArchive', false)) {
+            return $this->renameFilderInZipWithArchive($file, $newName);
+        }
+        // Fall through to PclZip if ZipArchive is not available, or encountered an error opening the file.
+        //return _unzip_file_pclzip($file, $to, $needed_dirs);
+    }
+
+    public function renameFilderInZipWithArchive($file, $newName)
+    {
+        $archive = new ZipArchive;
+        $archive->open($file, ZipArchive::CREATE);
+
+        $originalName = $archive->getNameIndex(0);
+        $i = 0;
+        while ($item_name = $archive->getNameIndex($i)) {
+            if ($item_name === $originalName) {
+                $archive->deleteIndex($i);
+            }
+            $archive->renameIndex($i++, str_replace($originalName, $newName.'/', $item_name));
+        }
+
+        $archive->close();
+    }
 }
