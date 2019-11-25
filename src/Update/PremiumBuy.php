@@ -39,8 +39,8 @@ class PremiumBuy
         update_option('my_client_secret', $_REQUEST['client_secret']);
 
         $this->upgrade_plugin(LICENSE_CHECK_PLUGIN_NAME);
-    
-        wp_die(); // this is required to terminate immediately and return a proper response
+
+        exit(wp_redirect(admin_url('admin.php?page=license-example')));
     }
 
 
@@ -50,6 +50,7 @@ class PremiumBuy
         wp_cache_flush();
 
         $upgrader = new Plugin_Upgrader();
+        $update = new PremiumUpdate();
         $upgraded = $upgrader->upgrade($plugin_slug);
 
         return $upgraded;
