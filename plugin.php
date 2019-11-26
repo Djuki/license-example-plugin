@@ -29,12 +29,20 @@
  */
 
 use LicenseExample\Plugin\MainPage;
-use LicenseExample\Update\PluginAutoUpdate;
 use LicenseExample\Update\PremiumBuy;
 use LicenseExample\Update\PremiumUpdate;
 
 $slug = plugin_basename(__FILE__);
+if (is_admin()) {
+    if (!function_exists('get_plugin_data')) {
+        require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+    $plugin_data = get_plugin_data(__FILE__);
+}
+
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
+define("LICENSE_PLUGIN_VERSION", $plugin_data['Version'] ?? '1.0');
+define("STORE_VALUES_URI", 'license-store-values');
 define("LB_URL", "https://fbfa6f8b.ngrok.io");
 define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
 
@@ -46,35 +54,3 @@ $buy = new PremiumBuy;
 
 // Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
 $premiumUpdate = new PremiumUpdate;
-
-// If Logged user create nonce for guest user, that nonce doesn't work
-// This function create a nonce without token and id, like from wp_create_nonce but for guest user
-// Is based from WordPress builtin wp_create_nonce
-// Work with wp_verify_nonce and can be used like wp_create_nonce
-function wp_create_nonce_guest($action = -1)
-{
-    $i = wp_nonce_tick();
-    return substr(wp_hash($i . '|' . $action . '|0|', 'nonce'), -12, 10);
-}
-
-function install_plugin($plugin_zip)
-{
-    include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-    wp_cache_flush();
-
-    $upgrader = new Plugin_Upgrader();
-    $installed = $upgrader->install($plugin_zip);
-
-    return $installed;
-}
-
-function upgrade_plugin($plugin_slug)
-{
-    include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-    wp_cache_flush();
-
-    $upgrader = new Plugin_Upgrader();
-    $upgraded = $upgrader->upgrade($plugin_slug);
-
-    return $upgraded;
-}
