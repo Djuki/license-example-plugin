@@ -23,7 +23,7 @@ class MainPage
     function licenseBridgePage()
     {
         $nonce = wp_create_nonce("license_key_nonce");
-        $callback = LC_STORE_CALLBACK.('?action=lc_store_premium_values&_nonce=' . $nonce);
+        $callback = admin_url('admin.php?action='.STORE_VALUES_URI.'&_nonce=' . $nonce);
         $sellPage = PLUGIN_LANDING_PAGE.'?callback_url='.urlencode($callback);
 
         echo '<div class="wrap"><div id="icon-options-general" class="icon32"><br></div>
