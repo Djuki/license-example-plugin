@@ -34,6 +34,7 @@ use LicenseExample\Update\PremiumBuy;
 use LicenseExample\Update\PremiumUpdate;
 
 $slug = plugin_basename(__FILE__);
+define("PLUGIN_URL", plugin_dir_url(__FILE__));
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
 define("LB_URL", "https://fbfa6f8b.ngrok.io");
 define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
