@@ -82,7 +82,6 @@ class PremiumUpdate
         $plugin_info = get_plugins('/' . explode('/', plugin_basename(__FILE__))[0]);
 
         $nonce = wp_create_nonce("license_key_nonce");
-        $urlProtected = admin_url('admin-ajax.php?action=save_license_key&_nonce='.$nonce);
         
         if ($remote = $this->licenseServer->fetchPluginDetails()) {
 

@@ -45,7 +45,21 @@ $page = new MainPage;
 $buy = new PremiumBuy;
 
 // Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
-$premiumUpdate = new PremiumUpdate;
+//$premiumUpdate = new PremiumUpdate;
+
+function save_license_key()
+{
+
+    if (!isset($_GET['action'])) return;
+    if ($_GET['action'] !== 'save_license_key') return;
+
+    $buy = new PremiumBuy;
+    $buy->save_license_key();
+
+    echo 'Run cron task here.';
+    exit;
+}
+add_action('init', 'save_license_key');
 
 // If Logged user create nonce for guest user, that nonce doesn't work
 // This function create a nonce without token and id, like from wp_create_nonce but for guest user

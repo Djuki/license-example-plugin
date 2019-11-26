@@ -49,10 +49,12 @@ class PremiumBuy
         include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         wp_cache_flush();
 
+        ob_start();
         $upgrader = new Plugin_Upgrader();
         $update = new PremiumUpdate();
         $upgraded = $upgrader->upgrade($plugin_slug);
-
+        ob_end_clean();
+        
         return $upgraded;
     }
 }
