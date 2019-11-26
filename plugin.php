@@ -33,7 +33,15 @@ use LicenseExample\Update\PremiumBuy;
 use LicenseExample\Update\PremiumUpdate;
 
 $slug = plugin_basename(__FILE__);
+if (is_admin()) {
+    if (!function_exists('get_plugin_data')) {
+        require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+    }
+    $plugin_data = get_plugin_data(__FILE__);
+}
+
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
+define("LICENSE_PLUGIN_VERSION", $plugin_data['Version'] ?? '1.0');
 define("STORE_VALUES_URI", 'license-store-values');
 define("LB_URL", "https://fbfa6f8b.ngrok.io");
 define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
@@ -45,4 +53,4 @@ $page = new MainPage;
 $buy = new PremiumBuy;
 
 // Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
-//$premiumUpdate = new PremiumUpdate;
+$premiumUpdate = new PremiumUpdate;

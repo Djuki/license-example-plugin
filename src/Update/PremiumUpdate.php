@@ -22,11 +22,7 @@ class PremiumUpdate
         add_filter('site_transient_update_plugins', [$this, 'license_plugin_update']);
     }
     
-    /*
-    * $res contains information for plugins with custom update server 
-    * $action 'plugin_information'
-    * $args stdClass Object ( [slug] => woocommerce [is_ssl] => [fields] => Array ( [banners] => 1 [reviews] => 1 [downloaded] => [active_installs] => 1 ) [per_page] => 24 [locale] => en_US )
-    */
+    
     public function plugin_popup_info($res, $action, $args)
     {
 
@@ -79,22 +75,16 @@ class PremiumUpdate
         if (empty($transient->checked)) {
             return $transient;
         }
-        $plugin_info = get_plugins('/' . explode('/', plugin_basename(__FILE__))[0]);
 
-        $nonce = wp_create_nonce("license_key_nonce");
-        
-        if ($remote = $this->licenseServer->fetchPluginDetails()) {
+        $remote = $this->licenseServer->fetchPluginDetails();
 
+        if ($remote && $this->newVersionAvailable($remote)) {
+                $filePath = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
+                $content = base64_decode($remote->download_content);
+                file_put_contents($filePath, $content);
 
-            //$file = download_url($remote->download_url);
-            $filePath = '/tmp/test.zip';
-            $content = base64_decode($remote->download_content);
-            file_put_contents($filePath, $content);
+                $this->renameFolderInZip($filePath, dirname(LICENSE_CHECK_PLUGIN_NAME));
 
-            $this->renameFolderInZip($filePath, dirname(LICENSE_CHECK_PLUGIN_NAME));
-
-            // your installed plugin version should be on the line below! You can obtain it dynamically of course 
-            if ($remote && version_compare('1.0', $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<')) {
                 $res = new \stdClass();
                 $res->slug = LICENSE_CHECK_PLUGIN_NAME;
                 $res->plugin = LICENSE_CHECK_PLUGIN_NAME;
@@ -102,9 +92,8 @@ class PremiumUpdate
                 $res->tested = $remote->tested;
                 $res->package = $filePath;
                 $transient->response[$res->plugin] = $res;
-                //$transient->checked[$res->plugin] = $remote->version;
-                
-            }
+                $transient->checked[$res->plugin] = $remote->version;
+            
         }
         return $transient;
     }
@@ -133,5 +122,10 @@ class PremiumUpdate
         }
 
         $archive->close();
+    }
+
+    private function newVersionAvailable($remote)
+    {
+        return version_compare(LICENSE_PLUGIN_VERSION, $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<');
     }
 }
