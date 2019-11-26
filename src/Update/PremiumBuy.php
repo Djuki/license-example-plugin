@@ -37,8 +37,6 @@ class PremiumBuy
         update_option('my_client_secret', $_REQUEST['client_secret']);
 
         $this->upgradePlugin(LICENSE_CHECK_PLUGIN_NAME);
-
-        exit(wp_redirect(admin_url('admin.php?page=license-example')));
     }
 
 
@@ -47,11 +45,10 @@ class PremiumBuy
         include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         wp_cache_flush();
 
-        ob_start();
         $upgrader = new Plugin_Upgrader();
         $update = new PremiumUpdate();
         $upgraded = $upgrader->upgrade($plugin_slug);
-        ob_end_clean();
+        activate_plugin($plugin_slug);
 
         return $upgraded;
     }
