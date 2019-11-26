@@ -2,6 +2,7 @@
 
 namespace LicenseExample\Update;
 
+use WP_Error;
 use ZipArchive;
 
 class PremiumUpdate
