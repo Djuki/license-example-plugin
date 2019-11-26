@@ -53,4 +53,4 @@ $page = new MainPage;
 $buy = new PremiumBuy;
 
 // Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
-// $premiumUpdate = new PremiumUpdate;
+$premiumUpdate = new PremiumUpdate;
