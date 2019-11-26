@@ -5,7 +5,7 @@ namespace LicenseExample\Update;
 use Plugin_Upgrader;
 
 
-define('LC_URL_PATH', plugin_dir_url(__FILE__));
+define('LC_STORE_CALLBACK', plugin_dir_url(__FILE__).'/PremiumStore.php');
 define('LC_PATH', plugin_dir_path(__FILE__));
 
 class PremiumBuy
