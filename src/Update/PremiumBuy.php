@@ -4,19 +4,23 @@ namespace LicenseExample\Update;
 
 use Plugin_Upgrader;
 
+
+define('LC_URL_PATH', plugin_dir_url(__FILE__));
+define('LC_PATH', plugin_dir_path(__FILE__));
+
 class PremiumBuy
 {
 
     public function __construct()
     {
-        $this->init_hooks();
+        include(LC_PATH.'/PremiumStore.php');
     }
 
-    private function init_hooks()
+    /*private function init_hooks()
     {
         add_action('wp_ajax_nopriv_save_license_key', [$this, 'save_license_key']);
         add_action('wp_ajax_save_license_key', [$this, 'save_license_key']);
-    }
+    }*/
 
     /**
      * After the plugin user purchase the premium plugin version
@@ -54,7 +58,7 @@ class PremiumBuy
         $update = new PremiumUpdate();
         $upgraded = $upgrader->upgrade($plugin_slug);
         ob_end_clean();
-        
+
         return $upgraded;
     }
 }

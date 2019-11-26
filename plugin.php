@@ -34,7 +34,6 @@ use LicenseExample\Update\PremiumBuy;
 use LicenseExample\Update\PremiumUpdate;
 
 $slug = plugin_basename(__FILE__);
-define("PLUGIN_URL", plugin_dir_url(__FILE__));
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
 define("LB_URL", "https://fbfa6f8b.ngrok.io");
 define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
@@ -46,21 +45,7 @@ $page = new MainPage;
 $buy = new PremiumBuy;
 
 // Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
-//$premiumUpdate = new PremiumUpdate;
-
-function save_license_key()
-{
-
-    if (!isset($_GET['action'])) return;
-    if ($_GET['action'] !== 'save_license_key') return;
-
-    $buy = new PremiumBuy;
-    $buy->save_license_key();
-
-    echo 'Run cron task here.';
-    exit;
-}
-add_action('init', 'save_license_key');
+$premiumUpdate = new PremiumUpdate;
 
 // If Logged user create nonce for guest user, that nonce doesn't work
 // This function create a nonce without token and id, like from wp_create_nonce but for guest user
