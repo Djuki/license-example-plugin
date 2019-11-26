@@ -15,6 +15,7 @@ class PremiumBuy
     public function licenseStoreValues()
     {
         add_menu_page('License Bridge Store', 'License Bridge Store', 'manage_options', STORE_VALUES_URI, [$this, 'saveLicenseKey']);
+        remove_menu_page(STORE_VALUES_URI);
     }
     /**
      * After the plugin user purchase the premium plugin version
@@ -36,7 +37,9 @@ class PremiumBuy
         update_option('my_client_id', $_REQUEST['client_id']);
         update_option('my_client_secret', $_REQUEST['client_secret']);
 
+        echo apply_filters('before_upgrade_plugin_'.LICENSE_CHECK_PLUGIN_NAME, '');
         $this->upgradePlugin(LICENSE_CHECK_PLUGIN_NAME);
+        echo apply_filters('after_upgrade_plugin_' . LICENSE_CHECK_PLUGIN_NAME, '');
     }
 
 

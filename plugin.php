@@ -29,7 +29,6 @@
  */
 
 use LicenseExample\Plugin\MainPage;
-use LicenseExample\Update\PluginAutoUpdate;
 use LicenseExample\Update\PremiumBuy;
 use LicenseExample\Update\PremiumUpdate;
 
@@ -47,35 +46,3 @@ $buy = new PremiumBuy;
 
 // Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
 //$premiumUpdate = new PremiumUpdate;
-
-// If Logged user create nonce for guest user, that nonce doesn't work
-// This function create a nonce without token and id, like from wp_create_nonce but for guest user
-// Is based from WordPress builtin wp_create_nonce
-// Work with wp_verify_nonce and can be used like wp_create_nonce
-function wp_create_nonce_guest($action = -1)
-{
-    $i = wp_nonce_tick();
-    return substr(wp_hash($i . '|' . $action . '|0|', 'nonce'), -12, 10);
-}
-
-function install_plugin($plugin_zip)
-{
-    include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-    wp_cache_flush();
-
-    $upgrader = new Plugin_Upgrader();
-    $installed = $upgrader->install($plugin_zip);
-
-    return $installed;
-}
-
-function upgrade_plugin($plugin_slug)
-{
-    include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-    wp_cache_flush();
-
-    $upgrader = new Plugin_Upgrader();
-    $upgraded = $upgrader->upgrade($plugin_slug);
-
-    return $upgraded;
-}
