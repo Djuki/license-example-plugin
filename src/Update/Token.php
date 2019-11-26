@@ -13,7 +13,7 @@ class Token
     public function getLicenceOauthToken()
     {
         $token = false;
-        $url = admin_url('admin-ajax.php?action=save_license_key');
+        $url = admin_url('admin.php?page=' . STORE_VALUES_URI);
         $provider = new \League\OAuth2\Client\Provider\GenericProvider([
             'clientId'                => get_option('my_client_id'),    // The client ID assigned to you by the provider
             'clientSecret'            => get_option('my_client_secret'),   // The client password assigned to you by the provider
