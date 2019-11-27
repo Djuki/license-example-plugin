@@ -76,13 +76,19 @@ class PremiumUpdate
         if (empty($transient->checked)) {
             return $transient;
         }
+        if (isset($transient->response[LICENSE_CHECK_PLUGIN_NAME])) {
+            return $transient;
+        }
 
         $remote = $this->licenseServer->fetchPluginDetails();
 
         if ($remote && $this->newVersionAvailable($remote)) {
-                $filePath = $this->createPluginFile($remote);
+                $filePath = $this->tempPluginZip($remote);
 
-                $this->renameFolderInZip($filePath, dirname(LICENSE_CHECK_PLUGIN_NAME));
+                if (!file_exists($filePath)) {
+                    $this->createPluginFile($remote);
+                    $this->renameFolderInZip($filePath, dirname(LICENSE_CHECK_PLUGIN_NAME));
+                }
 
                 $res = new \stdClass();
                 $res->slug = LICENSE_CHECK_PLUGIN_NAME;
@@ -100,38 +106,13 @@ class PremiumUpdate
     public function renameFolderInZip($file, $newName)
     {
         if (class_exists('ZipArchive', false)) {
-            //return $this->renameFilderInZipWithArchive($file, $newName);
+            return $this->renameFolderInZipWithArchive($file, $newName);
         }
         // Fall through to PclZip if ZipArchive is not available, or encountered an error opening the file.
-        require_once(ABSPATH . 'wp-admin/includes/class-pclzip.php');
-        $zip = new PclZip($file);
-
-        $tempDir = get_temp_dir();
-        $result = _unzip_file_pclzip($file, $tempDir);
-
-        if ($result !== true) {
-            return $result;
-        }
-
-        $extracted = $zip->extract();
-        $firstFolder = $extracted[0]['filename'] ?? '';   
-        
-        $filesToCreate = [];
-        foreach($extracted as $node => $details) {
-            $filesToCreate[] = $tempDir.str_replace($firstFolder, $newName . '/', $extracted[$node]['filename']);
-            //$extracted[$node]['filename'] = str_replace($firstFolder, $newName.'/', $extracted[$node]['filename']);
-            //$extracted[$node]['stored_filename'] = str_replace($firstFolder, $newName.'/', $extracted[$node]['stored_filename']);
-        }
-        rename($tempDir.$firstFolder, $tempDir.$newName);
-
-        wp_delete_file($file);
-        if ($zip->create($filesToCreate, null, $tempDir) === 0) {
-            return $zip->errorInfo(true);
-        }
-        $this->deleteDirectory($tempDir.$newName);
+        $this->renameFolderInZipFallback($file, $newName);
     }
 
-    public function renameFilderInZipWithArchive($file, $newName)
+    public function renameFolderInZipWithArchive($file, $newName)
     {
         $archive = new ZipArchive;
         $archive->open($file, ZipArchive::CREATE);
@@ -148,22 +129,74 @@ class PremiumUpdate
         $archive->close();
     }
 
+    private function renameFolderInZipFallback($file, $newName)
+    {
+        require_once(ABSPATH . 'wp-admin/includes/class-pclzip.php');
+        $zip = new PclZip($file);
+
+        $tempDir = $this->tempPluginDirectory();
+        $result = _unzip_file_pclzip($file, $tempDir);
+
+        if ($result !== true) {
+            return $result;
+        }
+
+        $extracted = $zip->extract();
+        $firstFolder = $extracted[0]['filename'] ?? '';
+
+        $filesToCreate = [];
+        foreach ($extracted as $node => $details) {
+            $filesToCreate[] = $tempDir . str_replace($firstFolder, $newName . '/', $extracted[$node]['filename']);
+        }
+        rename($tempDir . $firstFolder, $tempDir . $newName);
+
+        wp_delete_file($file);
+        if ($zip->create($filesToCreate, null, $this->tempPluginDirectory()) === 0) {
+            return $zip->errorInfo(true);
+        }
+        $this->deleteDirectory($tempDir . $newName);
+    }
+
     private function newVersionAvailable($remote)
     {
         return version_compare(LICENSE_PLUGIN_VERSION, $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<');
     }
 
+    private function tempPluginDirectory()
+    {
+        return get_temp_dir() . md5(LICENSE_CHECK_PLUGIN_NAME) . DIRECTORY_SEPARATOR;
+    }
+
+    private function createPluginDirectory()
+    {
+        $dir = $this->tempPluginDirectory();
+        if (!file_exists($dir)) {
+            mkdir($dir);
+        }
+        return $dir;
+    }
+
+    private function tempPluginZip($remote)
+    {
+        return $this->createPluginDirectory() . md5($remote->version) . '.tmp';
+    }
+
     private function createPluginFile($remote)
     {
-        $filePath = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
+        $this->deleteDirectory($this->tempPluginDirectory());
+        $this->createPluginDirectory();
+
+        $filePath = $this->tempPluginZip($remote);
         $content = base64_decode($remote->download_content);
         file_put_contents($filePath, $content);
-
-        return $filePath;
     }
 
     private function deleteDirectory($dirname)
     {
+        if (empty($dirname) || $dirname == '/') {
+            return false;
+        }
+
         if (is_dir($dirname))
             $dir_handle = opendir($dirname);
         if (!$dir_handle)
