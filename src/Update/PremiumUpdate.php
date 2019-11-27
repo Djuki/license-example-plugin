@@ -2,6 +2,7 @@
 
 namespace LicenseExample\Update;
 
+use PclZip;
 use WP_Error;
 use ZipArchive;
 
@@ -79,9 +80,7 @@ class PremiumUpdate
         $remote = $this->licenseServer->fetchPluginDetails();
 
         if ($remote && $this->newVersionAvailable($remote)) {
-                $filePath = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
-                $content = base64_decode($remote->download_content);
-                file_put_contents($filePath, $content);
+                $filePath = $this->createPluginFile($remote);
 
                 $this->renameFolderInZip($filePath, dirname(LICENSE_CHECK_PLUGIN_NAME));
 
@@ -104,8 +103,35 @@ class PremiumUpdate
             //return $this->renameFilderInZipWithArchive($file, $newName);
         }
         // Fall through to PclZip if ZipArchive is not available, or encountered an error opening the file.
-        $filePath = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
-        $unzipped = _unzip_file_pclzip($file, $filePath, [$newName]);
+        require_once(ABSPATH . 'wp-admin/includes/class-pclzip.php');
+        $zip = new PclZip($file);
+
+        $tempDir = get_temp_dir();
+        $result = _unzip_file_pclzip($file, $tempDir);
+
+        if ($result !== true) {
+            return $result;
+        }
+
+        $extracted = $zip->extract();
+        $firstFolder = $extracted[0]['filename'] ?? '';   
+        
+        $filesToCreate = [];
+        foreach($extracted as $node => $details) {
+            $filesToCreate[] = $tempDir.str_replace($firstFolder, $newName . '/', $extracted[$node]['filename']);
+            //$extracted[$node]['filename'] = str_replace($firstFolder, $newName.'/', $extracted[$node]['filename']);
+            //$extracted[$node]['stored_filename'] = str_replace($firstFolder, $newName.'/', $extracted[$node]['stored_filename']);
+        }
+        rename($tempDir.$firstFolder, $tempDir.$newName);
+
+        //$newFile = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
+        //$newZip = new PclZip($newFile);
+        if ($zip->create($filesToCreate) === 0) {
+            return $newZip->errorInfo(true);
+        }
+        
+        return true;
+        
     }
 
     public function renameFilderInZipWithArchive($file, $newName)
@@ -128,5 +154,14 @@ class PremiumUpdate
     private function newVersionAvailable($remote)
     {
         return version_compare(LICENSE_PLUGIN_VERSION, $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<');
+    }
+
+    private function createPluginFile($remote)
+    {
+        $filePath = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
+        $content = base64_decode($remote->download_content);
+        file_put_contents($filePath, $content);
+
+        return $filePath;
     }
 }
