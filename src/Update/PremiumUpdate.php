@@ -124,14 +124,11 @@ class PremiumUpdate
         }
         rename($tempDir.$firstFolder, $tempDir.$newName);
 
-        //$newFile = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
-        //$newZip = new PclZip($newFile);
-        if ($zip->create($filesToCreate) === 0) {
-            return $newZip->errorInfo(true);
+        wp_delete_file($file);
+        if ($zip->create($filesToCreate, null, $tempDir) === 0) {
+            return $zip->errorInfo(true);
         }
-        
-        return true;
-        
+        $this->deleteDirectory($tempDir.$newName);
     }
 
     public function renameFilderInZipWithArchive($file, $newName)
@@ -163,5 +160,24 @@ class PremiumUpdate
         file_put_contents($filePath, $content);
 
         return $filePath;
+    }
+
+    private function deleteDirectory($dirname)
+    {
+        if (is_dir($dirname))
+            $dir_handle = opendir($dirname);
+        if (!$dir_handle)
+            return false;
+        while ($file = readdir($dir_handle)) {
+            if ($file != "." && $file != "..") {
+                if (!is_dir($dirname . DIRECTORY_SEPARATOR. $file))
+                    unlink($dirname . DIRECTORY_SEPARATOR . $file);
+                else
+                    $this->deleteDirectory($dirname . DIRECTORY_SEPARATOR . $file);
+            }
+        }
+        closedir($dir_handle);
+        rmdir($dirname);
+        return true;
     }
 }
