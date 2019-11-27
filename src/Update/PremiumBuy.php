@@ -36,6 +36,7 @@ class PremiumBuy
         update_option('my_license_key', $_REQUEST['lk']);
         update_option('my_client_id', $_REQUEST['client_id']);
         update_option('my_client_secret', $_REQUEST['client_secret']);
+        update_option('my_access_token', false);
 
         echo apply_filters('before_upgrade_plugin_'.LICENSE_CHECK_PLUGIN_NAME, '');
         $this->upgradePlugin(LICENSE_CHECK_PLUGIN_NAME);

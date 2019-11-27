@@ -101,10 +101,11 @@ class PremiumUpdate
     public function renameFolderInZip($file, $newName)
     {
         if (class_exists('ZipArchive', false)) {
-            return $this->renameFilderInZipWithArchive($file, $newName);
+            //return $this->renameFilderInZipWithArchive($file, $newName);
         }
         // Fall through to PclZip if ZipArchive is not available, or encountered an error opening the file.
-        //return _unzip_file_pclzip($file, $to, $needed_dirs);
+        $filePath = wp_tempnam(LICENSE_CHECK_PLUGIN_NAME);
+        $unzipped = _unzip_file_pclzip($file, $filePath, [$newName]);
     }
 
     public function renameFilderInZipWithArchive($file, $newName)
