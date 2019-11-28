@@ -1,19 +1,35 @@
 <?php
 
-namespace LicenseExample\Update;
+namespace LicenseBridge\WordPress\Update;
+
+use League\OAuth2\Client\Token\AccessToken;
 
 class LicenseServer
 {
+
+    /**
+     * Token
+     *
+     * @var Token
+     */
     private $token;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->token = new Token;
     }
+
+    /**
+     * Fetch plugin details from LicenseBridge API
+     *
+     * @return array
+     */
     public function fetchPluginDetails()
     {
         if (false == $remote = get_transient(LICENSE_CHECK_PLUGIN_NAME)) {
-
             if (!$token = $this->token->getLicenceOauthToken()) {
                 return false;
             }
@@ -24,7 +40,7 @@ class LicenseServer
             ];
 
             $remote = wp_remote_get(
-                LB_URL . '/api/product/update-check/my-first-product',
+                FETCH_PLUGIN_DETAILS_URL,
                 array(
                     'timeout' => 10,
                     'headers' => $headers
@@ -32,8 +48,7 @@ class LicenseServer
             );
 
             if (!is_wp_error($remote) && isset($remote['response']['code']) && $remote['response']['code'] == 200 && !empty($remote['body'])) {
-                //set_transient('misha_upgrade_YOUR_PLUGIN_SLUG', $remote, 43200); // 12 hours cache
-                set_transient(LICENSE_CHECK_PLUGIN_NAME, $remote, 30); // 12 hours cache
+                set_transient(LICENSE_CHECK_PLUGIN_NAME, $remote, TRANSIENT_CACHE_TIME);
             }
         }
 

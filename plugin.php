@@ -29,8 +29,8 @@
  */
 
 use LicenseExample\Plugin\MainPage;
-use LicenseExample\Update\PremiumBuy;
-use LicenseExample\Update\PremiumUpdate;
+use LicenseBridge\WordPress\Update\PremiumBuy;
+use LicenseBridge\WordPress\Update\PremiumUpdate;
 
 $slug = plugin_basename(__FILE__);
 if (is_admin()) {
@@ -43,8 +43,11 @@ if (is_admin()) {
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
 define("LICENSE_PLUGIN_VERSION", $plugin_data['Version'] ?? '1.0');
 define("STORE_VALUES_URI", 'license-store-values');
-define("LB_URL", "https://10e9b9e3.ngrok.io");
+define("LB_URL", "https://aab329b4.ngrok.io");
 define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
+define("FETCH_PLUGIN_DETAILS_URL", LB_URL . '/api/product/update-check/my-first-product');
+define("FETCH_TOKEN_URL", LB_URL . '/oauth/token');
+define("TRANSIENT_CACHE_TIME", 30); // 12 hours cache
 
 include "vendor/autoload.php";
 
