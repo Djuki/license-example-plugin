@@ -13,7 +13,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "LicenseExample\\": "src/"
+            "LicenseExample\\": "src/",
+            "LicenseBridge\\WordPress\\": "bridge/"
         }
     },
     "require": {

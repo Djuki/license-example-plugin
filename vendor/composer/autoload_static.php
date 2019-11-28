@@ -21,6 +21,7 @@ class ComposerStaticInit85fd0c36a16d5549d736ae1371fc52cb
         'L' => 
         array (
             'LicenseExample\\' => 15,
+            'LicenseBridge\\WordPress\\' => 24,
             'League\\OAuth2\\Client\\' => 21,
         ),
         'G' => 
@@ -39,6 +40,10 @@ class ComposerStaticInit85fd0c36a16d5549d736ae1371fc52cb
         'LicenseExample\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'LicenseBridge\\WordPress\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/bridge',
         ),
         'League\\OAuth2\\Client\\' => 
         array (
