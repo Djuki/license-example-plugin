@@ -43,7 +43,7 @@ if (is_admin()) {
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
 define("LICENSE_PLUGIN_VERSION", $plugin_data['Version'] ?? '1.0');
 define("STORE_VALUES_URI", 'license-store-values');
-define("LB_URL", "https://aab329b4.ngrok.io");
+define("LB_URL", "https://47686e6b.ngrok.io");
 define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
 define("FETCH_PLUGIN_DETAILS_URL", LB_URL . '/api/product/update-check/my-first-product');
 define("FETCH_TOKEN_URL", LB_URL . '/oauth/token');

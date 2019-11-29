@@ -32,23 +32,11 @@ class Token
                 update_option('my_access_token', serialize($token));
             }
         } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
-            add_action('admin_notices', [$this, 'errorOauthKey']);
+            new AdminNotice("We can't get key from Licence Bridge. The error has occurred.", 'error');
         } catch (\Exception $e) {
-            add_action('admin_notices', [$this, 'errorOauthKey']);
+            new AdminNotice("We can't get key from Licence Bridge. The error has occurred.", 'error');
         }
 
         return $token;
-    }
-
-    /**
-     * Show alert message into the admin
-     *
-     * @return void
-     */
-    public function errorOauthKey()
-    {
-        echo ' <div class="error notice">
-                 <p>We can\'t get key from Licence Bridge. The error has occurred.</p>
-          </div>';
     }
 }

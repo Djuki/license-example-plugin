@@ -36,8 +36,8 @@ class PremiumUpdate
      */
     private function init_hooks()
     {
-        add_filter('plugins_api', [$this, 'plugin_popup_info'], 20, 3);
-        add_filter('site_transient_update_plugins', [$this, 'license_plugin_update']);
+        add_filter('plugins_api', [$this, 'pluginPopupInfo'], 20, 3);
+        add_filter('site_transient_update_plugins', [$this, 'licensePluginUpdate']);
     }
 
     /**
@@ -49,7 +49,7 @@ class PremiumUpdate
      * @param object $args
      * @return mixed
      */
-    public function plugin_popup_info($res, $action, $args)
+    public function pluginPopupInfo($res, $action, $args)
     {
         // do nothing if this is not about getting plugin information
         if ($action !== 'plugin_information') {
@@ -108,7 +108,7 @@ class PremiumUpdate
      * @param object $transient
      * @return object
      */
-    public function license_plugin_update($transient)
+    public function licensePluginUpdate($transient)
     {
         if (empty($transient->checked)) {
             return $transient;
@@ -117,10 +117,24 @@ class PremiumUpdate
             return $transient;
         }
 
+        $checked = floor((time() - $transient->last_checked) / 60); // In minutes ago
+        if ($checked < 720) {
+            //return $transient;
+        }
+
         $remote = $this->licenseServer->fetchPluginDetails();
+
+        if (is_wp_error($remote)) {
+            new AdminNotice($remote->get_error_message(), 'error');
+            return $transient;
+        }
 
         if ($remote && $this->newVersionAvailable($remote)) {
             $filePath = $this->archive->preparePluginZip($remote);
+
+            if (is_wp_error($filePath)) {
+                return new AdminNotice($filePath->get_error_message(), 'error');
+            }
 
             $res = new \stdClass();
             $res->slug = LICENSE_CHECK_PLUGIN_NAME;
