@@ -3,6 +3,7 @@
 namespace LicenseBridge\WordPress\Update;
 
 use PclZip;
+use WP_Error;
 use ZipArchive;
 
 class PluginZip
@@ -20,6 +21,11 @@ class PluginZip
 
         if (!file_exists($filePath)) {
             $this->createPluginFile($remote);
+
+            if (!file_exists($filePath)) {
+                return new WP_Error('401', sprintf("The file `%s` is not created", $filePath));
+            }
+
             $this->renameFolderInZip($filePath, dirname(LICENSE_CHECK_PLUGIN_NAME));
         }
 

@@ -3,6 +3,7 @@
 namespace LicenseBridge\WordPress\Update;
 
 use League\OAuth2\Client\Token\AccessToken;
+use WP_Error;
 
 class LicenseServer
 {
@@ -47,13 +48,25 @@ class LicenseServer
                 )
             );
 
-            if (!is_wp_error($remote) && isset($remote['response']['code']) && $remote['response']['code'] == 200 && !empty($remote['body'])) {
-                set_transient(LICENSE_CHECK_PLUGIN_NAME, $remote, TRANSIENT_CACHE_TIME);
+            if (!$this->validResponse($remote)) {
+                return new WP_Error('404', 'We could not get plugin information from License Bridge');
             }
+            
+            set_transient(LICENSE_CHECK_PLUGIN_NAME, $remote, TRANSIENT_CACHE_TIME);
         }
 
         $remote = json_decode($remote['body']);
-        
         return $remote;
+    }
+
+    /**
+     * Check is response from server valid
+     *
+     * @param array $remote
+     * @return void
+     */
+    private function validResponse($remote)
+    {
+        return isset($remote['response']['code']) && $remote['response']['code'] == 200 && !empty($remote['body']);
     }
 }
