@@ -16,11 +16,19 @@ class LicenseServer
     private $token;
 
     /**
+     * Remote
+     *
+     * @var Remote
+     */
+    private $remote;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->token = new Token;
+        $this->remote = new Remote;
     }
 
     /**
@@ -40,13 +48,7 @@ class LicenseServer
                 'Authorization' => 'Bearer ' . $token->getToken()
             ];
 
-            $remote = wp_remote_get(
-                FETCH_PLUGIN_DETAILS_URL,
-                array(
-                    'timeout' => 10,
-                    'headers' => $headers
-                )
-            );
+            $remote = $this->remote->get(FETCH_PLUGIN_DETAILS_URL, $headers);
 
             if (!$this->validResponse($remote)) {
                 return new WP_Error('404', 'We could not get plugin information from License Bridge');
@@ -57,6 +59,28 @@ class LicenseServer
 
         $remote = json_decode($remote['body']);
         return $remote;
+    }
+
+    /**
+     * Set token, used for mocking in unit testing
+     *
+     * @param Token $token
+     * @return void
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
+    }
+
+    /**
+     * Set remote, used for mocking in unit testing
+     *
+     * @param Remote $remote
+     * @return void
+     */
+    public function setRemote($remote)
+    {
+        $this->remote = $remote;
     }
 
     /**

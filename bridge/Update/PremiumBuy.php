@@ -39,14 +39,14 @@ class PremiumBuy
     public function saveLicenseKey()
     {
         if (!wp_verify_nonce($_REQUEST['_nonce'], "license_key_nonce")) {
-            exit("No naughty business please");
+            return;
         }
 
         // Check license key and save it
-        update_option('my_license_key', $_REQUEST['lk']);
-        update_option('my_client_id', $_REQUEST['client_id']);
-        update_option('my_client_secret', $_REQUEST['client_secret']);
-        update_option('my_access_token', false);
+        update_option(LP_OPTION_PREFIX . 'my_license_key', $_REQUEST['lk']);
+        update_option(LP_OPTION_PREFIX . 'my_client_id', $_REQUEST['client_id']);
+        update_option(LP_OPTION_PREFIX . 'my_client_secret', $_REQUEST['client_secret']);
+        update_option(LP_OPTION_PREFIX . 'my_access_token', false);
 
         echo apply_filters('before_upgrade_plugin_'.LICENSE_CHECK_PLUGIN_NAME, '');
         $this->upgradePlugin(LICENSE_CHECK_PLUGIN_NAME);
@@ -59,7 +59,7 @@ class PremiumBuy
      * @param string $plugin_slug
      * @return bool
      */
-    private function upgradePlugin($plugin_slug)
+    public function upgradePlugin($plugin_slug)
     {
         include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
         wp_cache_flush();
