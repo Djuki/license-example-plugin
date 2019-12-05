@@ -14,6 +14,7 @@ class TokenTest extends TestCase
     public function it_get_access_token_from_remote_server()
     {
         // Arrange
+        $this->storeValidCredentials();
         update_option(LP_OPTION_PREFIX . 'my_access_token', false);
 
         $accessToken = new AccessToken([
@@ -37,9 +38,10 @@ class TokenTest extends TestCase
     /**
      * @test
      */
-    public function if_token_srored_do_not_fetch_a_new_one()
+    public function if_token_stored_do_not_fetch_a_new_one()
     {
         // Arrange
+        $this->storeValidCredentials();
         $accessToken = $this->accessTokenMock(false);
 
         update_option(LP_OPTION_PREFIX . 'my_access_token', serialize($accessToken));
@@ -64,6 +66,7 @@ class TokenTest extends TestCase
     public function if_token_expired_fetch_new_one()
     {
         // Arrange
+        $this->storeValidCredentials();
         $accessToken = $this->accessTokenMock(true);
 
         update_option(LP_OPTION_PREFIX . 'my_access_token', serialize($accessToken));
@@ -92,6 +95,7 @@ class TokenTest extends TestCase
     public function it_return_false_when_provider_throw_exception()
     {
         // Arrange
+        $this->storeValidCredentials();
         update_option(LP_OPTION_PREFIX . 'my_access_token', false);
 
         $accessToken = new AccessToken([
@@ -107,6 +111,24 @@ class TokenTest extends TestCase
 
         $token = new Token;
         $token->setFactory($factory);
+
+        // Act
+        $oauthToken = $token->getLicenceOauthToken();
+
+        // Assert
+        $this->assertFalse($oauthToken);
+    }
+
+    /**
+     * @test
+     */
+    public function if_credentials_are_empty_return_false()
+    {
+        // Arrange
+        $this->storeValidCredentials();
+        update_option(LP_OPTION_PREFIX . 'my_access_token', false);
+
+        $token = new Token;
 
         // Act
         $oauthToken = $token->getLicenceOauthToken();
@@ -146,5 +168,17 @@ class TokenTest extends TestCase
             ->willReturn('abc');
 
         return $accessToken;
+    }
+
+    /**
+     * Set the valid credentials
+     *
+     * @return void
+     */
+    private function storeValidCredentials()
+    {
+        update_option(LP_OPTION_PREFIX . 'my_license_key', 'abc');
+        update_option(LP_OPTION_PREFIX . 'my_client_id', 'key');
+        update_option(LP_OPTION_PREFIX . 'my_client_secret', 'secret');
     }
 }
