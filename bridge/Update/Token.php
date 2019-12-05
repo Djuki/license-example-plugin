@@ -26,6 +26,10 @@ class Token
      */
     public function getLicenceOauthToken()
     {
+        if (!$this->checkCredentials()) {
+            return false;
+        }
+        
         $token = false;
         $url = admin_url('admin.php?page=' . STORE_VALUES_URI);
         $options = [
@@ -55,6 +59,19 @@ class Token
         }
 
         return $token;
+    }
+
+    /**
+     * Check are credentials stored in WordPress
+     *
+     * @return bool
+     */
+    public function checkCredentials()
+    {
+        $clientId = get_option(LP_OPTION_PREFIX . 'my_client_id');
+        $secret = get_option(LP_OPTION_PREFIX . 'my_client_secret');
+        
+        return !empty($clientId) && !empty($secret);
     }
 
     /**
