@@ -40,6 +40,9 @@ if (is_admin()) {
     $plugin_data = get_plugin_data(__FILE__);
 }
 
+if (!defined("LP_OPTION_PREFIX")) {
+    define("LP_OPTION_PREFIX", "LP_");
+}
 define("LICENSE_CHECK_PLUGIN_NAME", $slug);
 define("LICENSE_PLUGIN_VERSION", $plugin_data['Version'] ?? '1.0');
 define("STORE_VALUES_URI", 'license-store-values');

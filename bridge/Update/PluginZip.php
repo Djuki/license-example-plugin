@@ -39,7 +39,7 @@ class PluginZip
      * @param string $newName
      * @return void
      */
-    private function renameFolderInZip($file, $newName)
+    public function renameFolderInZip($file, $newName)
     {
         if (class_exists('ZipArchive', false)) {
             return $this->renameFolderInZipWithArchive($file, $newName);
@@ -122,7 +122,7 @@ class PluginZip
      *
      * @return void
      */
-    private function createPluginDirectory()
+    public function createPluginDirectory()
     {
         $dir = $this->tempPluginDirectory();
         if (!file_exists($dir)) {
@@ -138,7 +138,7 @@ class PluginZip
      * @param object $remote
      * @return string
      */
-    private function tempPluginZip($remote)
+    public function tempPluginZip($remote)
     {
         return $this->createPluginDirectory() . md5($remote->version) . '.tmp';
     }
@@ -149,7 +149,7 @@ class PluginZip
      * @param object $remote
      * @return void
      */
-    private function createPluginFile($remote)
+    public function createPluginFile($remote)
     {
         $this->deleteDirectory($this->tempPluginDirectory());
         $this->createPluginDirectory();
@@ -174,7 +174,7 @@ class PluginZip
         if (is_dir($dirname)) {
             $dir_handle = opendir($dirname);
         }
-        if (!$dir_handle) {
+        if (!isset($dir_handle) || !$dir_handle) {
             return false;
         }
         while ($file = readdir($dir_handle)) {

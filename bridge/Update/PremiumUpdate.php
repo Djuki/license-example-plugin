@@ -117,11 +117,6 @@ class PremiumUpdate
             return $transient;
         }
 
-        $checked = floor((time() - $transient->last_checked) / 60); // In minutes ago
-        if ($checked < 720) {
-            //return $transient;
-        }
-
         $remote = $this->licenseServer->fetchPluginDetails();
 
         if (is_wp_error($remote)) {
@@ -157,5 +152,27 @@ class PremiumUpdate
     private function newVersionAvailable($remote)
     {
         return version_compare(LICENSE_PLUGIN_VERSION, $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<');
+    }
+
+    /**
+     * Set license server
+     *
+     * @param LicenseServer $licenseServer
+     * @return void
+     */
+    public function setLicenseServer(LicenseServer $licenseServer)
+    {
+        $this->licenseServer = $licenseServer;
+    }
+
+    /**
+     * Set plugin zip
+     *
+     * @param PluginZip $pluginZip
+     * @return void
+     */
+    public function setPluginZip(PluginZip $pluginZip)
+    {
+        $this->archive = $pluginZip;
     }
 }
