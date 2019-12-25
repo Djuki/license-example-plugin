@@ -42,10 +42,10 @@ class LicenseServer
             if (!$token = $this->token->getLicenceOauthToken()) {
                 return false;
             }
-
             $headers = [
                 'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token->getToken()
+                'Authorization' => 'Bearer ' . $token->getToken(),
+                //'AppKey' => get_option(LP_OPTION_PREFIX . 'my_license_key')
             ];
 
             $remote = $this->remote->get(FETCH_PLUGIN_DETAILS_URL, $headers);
