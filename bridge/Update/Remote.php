@@ -22,4 +22,16 @@ class Remote
             )
         );
     }
+
+    /**
+     * Post to the remote url
+     *
+     * @param string $url
+     * @param array $arguments
+     * @return void
+     */
+    public function post($url, $arguments = [])
+    {
+        return wp_remote_post($url, $arguments);
+    }
 }

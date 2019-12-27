@@ -44,7 +44,7 @@ if (is_admin()) {
 /**
  * License Bridge base URL
  */
-define("LB_URL", "https://3534859e.ngrok.io");
+define("LB_URL", "https://38453dc7.ngrok.io");
 
 /**
  * Plugin purchase page. On this page customer can purchase the license
@@ -54,7 +54,7 @@ define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stri
 /**
  * API route to check is new plugin version available.
  */
-define("FETCH_PLUGIN_DETAILS_URL", LB_URL . '/api/product/update-check/my-first-product');
+define("FETCH_PLUGIN_DETAILS_URL", LB_URL . '/api/plugin/details/my-first-product');
 
 /**
  * Cache time for plugin update information. Suggested value is 43200 seconds (12 hours)
