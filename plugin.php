@@ -44,12 +44,15 @@ if (is_admin()) {
 /**
  * License Bridge base URL
  */
-define("LB_URL", "https://38453dc7.ngrok.io");
+define("LB_URL", "https://8eda7344.ngrok.io");
 
 /**
  * Plugin purchase page. On this page customer can purchase the license
  */
-define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
+//define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/life");
+//define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/paypal/life");
+//define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
+define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/paypal/basic");
 
 /**
  * API route to check is new plugin version available.
