@@ -45,7 +45,7 @@ class LicenseServer
             $headers = [
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $token->getToken(),
-                'LicenseKey' => get_option(LP_OPTION_PREFIX . 'my_license_key')
+                'LicenseKey' => get_option(LP_OPTION_PREFIX . 'my_license_key'),
             ];
 
             $remote = $this->remote->post(FETCH_PLUGIN_DETAILS_URL, [
@@ -56,8 +56,6 @@ class LicenseServer
                     'pluginFile' => substr(LICENSE_CHECK_PLUGIN_NAME, strpos(LICENSE_CHECK_PLUGIN_NAME, '/') + 1)
                 ]
             ]);
-
-            var_dump($remote); exit;
 
             if (!$this->validResponse($remote)) {
                 return new WP_Error('404', 'We could not get plugin information from License Bridge');

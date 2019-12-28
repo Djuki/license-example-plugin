@@ -66,9 +66,9 @@ class PremiumBuy
 
         $upgrader = new Plugin_Upgrader();
         $update = new PremiumUpdate();
-        $upgraded = $upgrader->upgrade($plugin_slug);
-        activate_plugin($plugin_slug);
+        //$upgraded = $upgrader->upgrade($plugin_slug);
+        //activate_plugin($plugin_slug);
 
-        return $upgraded;
+        //return $upgraded;
     }
 }
