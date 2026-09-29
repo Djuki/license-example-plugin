@@ -11,98 +11,82 @@
  * @wordpress-plugin
  * Plugin Name:       License Bridge connection example
  * Plugin URI:        https://example.com/plugin-name
- * Description:       Just an example how to connect to License Bridge
- * Version:           1.4.0
- * Requires at least: 5.2
+ * Description:       Example integration with the License Bridge WordPress SDK
+ * Version:           2.0.0
+ * Requires at least: 6.4
  * Requires PHP:      7.2
- * Tested up to: 5.2.3
  * Author:            Your Name
  * Author URI:        https://example.com
  * Text Domain:       license-bridge-example-connection
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       mc-woocommerce
- * Domain Path:       /languages
  */
 
+use LicenseExample\Plugin\LegacyOptionsMigration;
 use LicenseExample\Plugin\MainPage;
-use LicenseBridge\WordPress\Update\PremiumBuy;
-use LicenseBridge\WordPress\Update\PremiumUpdate;
 
-$slug = plugin_basename(__FILE__);
-if (is_admin()) {
-    if (!function_exists('get_plugin_data')) {
-        require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+/**
+ * License Bridge product slug (dashboard → Products).
+ */
+define('LB_EXAMPLE_PLUGIN_FILE', __FILE__);
+
+define('LB_LICENSE_PRODUCT_SLUG', 'mojprojekat');
+
+/**
+ * Provisioning key for imported licenses (dashboard → Licenses → Import).
+ * Not required when every customer purchases through License Bridge checkout.
+ */
+define('LB_PROVISIONING_KEY', 'z0gwYMCcYDs6h4NOIFcsFxHIUsOjOp9DBcnGBfYl0pcvIs3LlZ1wqQyQoRCl1eD1');
+
+/**
+ * Optional overrides for local / staging (uncomment and adjust).
+ */
+define('LB_API_URL', 'http://api.lb.test');
+// define('LB_MARKET_URL', 'http://starter.test');
+
+if (!function_exists('lb_example_license')) {
+    function lb_example_license()
+    {
+        global $lb_example_license;
+
+        if ($lb_example_license) {
+            return $lb_example_license;
+        }
+
+        if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+            return null;
+        }
+
+        require_once __DIR__ . '/vendor/autoload.php';
+        include __DIR__ . '/vendor/license-bridge/wordpress-sdk/src/Boot/bootstrap.php';
+
+        LegacyOptionsMigration::migrate(__FILE__);
+
+        $config = [
+            'plugin-slug'          => plugin_basename(__FILE__),
+            'license-product-slug' => LB_LICENSE_PRODUCT_SLUG,
+        ];
+
+        if (defined('LB_PROVISIONING_KEY') && LB_PROVISIONING_KEY !== '' && LB_PROVISIONING_KEY !== 'your-product-provisioning-key') {
+            $config['provisioning-key'] = LB_PROVISIONING_KEY;
+        }
+
+        if (defined('LB_API_URL')) {
+            $config['license-bridge-api-url'] = LB_API_URL;
+        }
+
+        if (defined('LB_MARKET_URL')) {
+            $config['license-bridge-url'] = LB_MARKET_URL;
+        }
+
+        $lb_example_license = \LicenseBridge\WordPressSDK\Boot\Loader::register(__FILE__, $config);
+
+        return $lb_example_license;
     }
-    $plugin_data = get_plugin_data(__FILE__);
+
+    lb_example_license();
 }
 
-/**
- * Configuration Area
- */
-
-/**
- * License Bridge base URL
- */
-define("LB_URL", "https://8eda7344.ngrok.io");
-
-/**
- * Plugin purchase page. On this page customer can purchase the license
- */
-//define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/life");
-//define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/paypal/life");
-//define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/stripe/basic");
-define("PLUGIN_LANDING_PAGE", "http://starter.test/product/my-first-product/paypal/basic");
-
-/**
- * API route to check is new plugin version available.
- */
-define("FETCH_PLUGIN_DETAILS_URL", LB_URL . '/api/plugin/details/my-first-product');
-
-/**
- * Cache time for plugin update information. Suggested value is 43200 seconds (12 hours)
- */
-define("TRANSIENT_CACHE_TIME", 30);
-
-
-/**
- * Configuration below is area you will less likely need to chnage.
- */
-
-
-/**
- * Plugin version we read from the header of this same file
- */
-define("LICENSE_PLUGIN_VERSION", $plugin_data['Version'] ?? '1.0');
-
-/**
- * Plugin slug - User friendly and URL valid name of a plugin.
- */
-define("LICENSE_CHECK_PLUGIN_NAME", $slug);
-
-/**
- * API route to fetch OAuth2 token
- */
-define("FETCH_TOKEN_URL", LB_URL . '/oauth/token');
-
-/**
- * Prefix we use to distinct from other plugins use this same plugin template.
- */
-if (!defined("LP_OPTION_PREFIX")) {
-    define("LP_OPTION_PREFIX", "LP_" . $slug . '_');
+if (is_admin()) {
+    new MainPage();
 }
-
-/**
- * Update to premium version page slug
- */
-define("STORE_VALUES_URI", 'license-store-values-' . $slug);
-
-
-include "vendor/autoload.php";
-
-$page = new MainPage;
-
-$buy = new PremiumBuy;
-
-// Turn the premium autoupdate only in premium plugin version, on separate branch ex:premium
-$premiumUpdate = new PremiumUpdate;

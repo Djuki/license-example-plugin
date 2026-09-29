@@ -1,6 +1,6 @@
 {
-    "name": "license-example",
-    "description": "Example how to store license key and check for update on LicenseBridge",
+    "name": "license-bridge/example-plugin",
+    "description": "Example how to integrate License Bridge WordPress SDK",
     "license": "MIT",
     "type": "project",
     "authors": [
@@ -13,14 +13,11 @@
     ],
     "autoload": {
         "psr-4": {
-            "LicenseExample\\": "src/",
-            "LicenseBridge\\WordPress\\": "bridge/"
+            "LicenseExample\\": "src/"
         }
     },
     "require": {
-        "league/oauth2-client": "^2.4"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^7.5"
+        "php": ">=7.2",
+        "license-bridge/wordpress-sdk": "^2.0"
     }
 }
