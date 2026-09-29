@@ -144,5 +144,5 @@ git push origin master
 
 ## See also
 
-- [WordPress-SDK README](../WordPress-SDK/README.md) — full SDK docs and provisioning details
+- [WordPress-SDK README](https://github.com/License-Bridge/WordPress-SDK) — full SDK docs and provisioning details
 - [License Bridge docs](https://licensebridge.com/docs/sdk)
